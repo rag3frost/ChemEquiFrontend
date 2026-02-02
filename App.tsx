@@ -120,8 +120,8 @@ const LoginPage: React.FC<{ onLoginSuccess: (user: string) => void }> = ({ onLog
     setError('');
     
     try {
-      const success = await apiService.login(email, password);
-      if (success) {
+      const result = await apiService.login(email, password);
+      if (result.success) {
         if (rememberMe) {
           localStorage.setItem('remembered_email', email);
         } else {
@@ -129,7 +129,7 @@ const LoginPage: React.FC<{ onLoginSuccess: (user: string) => void }> = ({ onLog
         }
         onLoginSuccess(email);
       } else {
-        setError('Invalid email or password. Please try again.');
+        setError(result.message || 'Invalid email or password. Please try again.');
       }
     } catch (err) {
       setError('A network error occurred. Please verify the backend API is reachable.');

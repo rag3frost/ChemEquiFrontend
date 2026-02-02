@@ -144,10 +144,46 @@ function transformAnalyticsResponse(data: any): AnalyticsData {
     title: rawChartData.radar_chart.title || 'System Health Radar'
   } : undefined;
 
+  // Transform pie charts (donut charts) - backend returns array of { label, data }
+  const pieCharts = (rawChartData.pie_charts || []).map((chart: any) => ({
+    label: chart.label || 'Distribution',
+    data: (chart.data || []).map((item: any) => ({
+      name: item.name || item.label || '',
+      value: item.value || item.count || 0
+    }))
+  }));
+
+  // Transform histograms - backend returns array of { column, bins, total, stats }
+  const histograms = (rawChartData.histograms || []).map((hist: any) => ({
+    column: hist.column || '',
+    bins: (hist.bins || []).map((bin: any) => ({
+      range: bin.range || `${bin.min}-${bin.max}`,
+      count: bin.count || 0,
+      min: bin.min || 0,
+      max: bin.max || 0
+    })),
+    total: hist.total || 0,
+    stats: hist.stats || { mean: 0, std: 0, min: 0, max: 0 }
+  }));
+
+  // Transform grouped bar charts - backend returns array of { title, group_by, groups, datasets }
+  const groupedBarCharts = (rawChartData.grouped_bar_charts || []).map((chart: any) => ({
+    title: chart.title || 'Comparison',
+    group_by: chart.group_by || '',
+    groups: chart.groups || [],
+    datasets: (chart.datasets || []).map((ds: any) => ({
+      label: ds.label || '',
+      values: ds.values || []
+    }))
+  }));
+
   const transformedChartData = {
     bar_charts: barCharts,
     line_charts: lineCharts,
-    radar_chart: radarChart
+    radar_chart: radarChart,
+    pie_charts: pieCharts,
+    histograms: histograms,
+    grouped_bar_charts: groupedBarCharts
   };
 
   return {
@@ -223,7 +259,7 @@ export const apiService = {
     }
   },
 
-  async login(email: string, password: string): Promise<boolean> {
+  async login(email: string, password: string): Promise<{ success: boolean; message?: string }> {
     try {
       const response = await fetch(`${BASE_URL}/api/auth/login/`, {
         method: 'POST',
@@ -241,12 +277,22 @@ export const apiService = {
         if (data.access) {
           saveTokens(data.access);
         }
-        return true;
+        return { success: true };
       }
-      return false;
+      
+      // Handle specific error codes
+      if (response.status === 429) {
+        return { success: false, message: 'Too many login attempts. Please wait a minute and try again.' };
+      }
+      
+      const errorData = await response.json().catch(() => ({}));
+      return { 
+        success: false, 
+        message: errorData.detail || errorData.message || 'Invalid email or password.' 
+      };
     } catch (error) {
       console.error('Login NetworkError:', error);
-      return false;
+      return { success: false, message: 'Network error. Please check your connection.' };
     }
   },
 
