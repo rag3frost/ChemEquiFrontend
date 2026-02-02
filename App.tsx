@@ -45,7 +45,7 @@ import { apiService } from './services/api';
 import { Button } from './components/Button';
 import { Card } from './components/Card';
 import { StatsCard } from './components/StatsCard';
-import { Chart, RadarChart, MultiLineChart } from './components/Charts';
+import { Chart, MultiLineChart } from './components/Charts';
 import { DashboardHeader } from './components/DashboardHeader';
 import { Progress } from './components/Progress';
 import { COLORS } from './constants';
@@ -1123,91 +1123,6 @@ const Dashboard: React.FC<{ onLogout: () => void; isDarkMode: boolean; toggleThe
             {/* VISUALIZATIONS TAB */}
             {activeTab === 'visualizations' && (
             <>
-            {/* Health Radar Section */}
-            {data?.chart_data?.radar_chart && (
-              <section>
-                <div className="flex items-center gap-2 mb-4 sm:mb-8">
-                  <h2 className="text-xl sm:text-2xl font-black text-textPrimary-light dark:text-textPrimary-dark tracking-tight">System Health Radar</h2>
-                  <div className="h-px bg-border-light dark:bg-border-dark flex-1 ml-2 sm:ml-4"></div>
-                </div>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Radar Chart Card */}
-                  <Card className="lg:col-span-2 relative overflow-hidden">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-primary/20 rounded-2xl flex items-center justify-center">
-                          <Activity className="text-primary" size={20} />
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-black text-textPrimary-light dark:text-textPrimary-dark">KPI Health Monitor</h3>
-                          <p className="text-xs text-textMuted-light dark:text-textMuted-dark">Normalized performance indicators</p>
-                        </div>
-                      </div>
-                    </div>
-                    <RadarChart 
-                      labels={data.chart_data.radar_chart.labels}
-                      values={data.chart_data.radar_chart.values}
-                      rawValues={data.chart_data.radar_chart.raw_values}
-                      healthScore={data.chart_data.radar_chart.health_score}
-                      isDarkMode={isDarkMode}
-                    />
-                  </Card>
-                  
-                  {/* KPI Breakdown Card - Compact */}
-                  <Card className="lg:col-span-1">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 bg-secondary/20 rounded-xl flex items-center justify-center">
-                        <Layers className="text-secondary" size={16} />
-                      </div>
-                      <h3 className="text-base font-bold text-textPrimary-light dark:text-textPrimary-dark">Metrics</h3>
-                    </div>
-                    <div className="space-y-3">
-                      {data.chart_data.radar_chart.labels.map((label, idx) => {
-                        const value = data.chart_data.radar_chart!.values[idx];
-                        const rawValue = data.chart_data.radar_chart!.raw_values[idx];
-                        const statusColor = value >= 70 ? 'text-green-500' : value >= 40 ? 'text-yellow-500' : 'text-red-500';
-                        const barColor = value >= 70 ? 'bg-green-500' : value >= 40 ? 'bg-yellow-500' : 'bg-red-500';
-                        
-                        const kpiInfo: Record<string, { icon: string; unit: string }> = {
-                          'Flowrate': { icon: '💧', unit: 'm³/h' },
-                          'Pressure': { icon: '🔴', unit: 'bar' },
-                          'Temperature': { icon: '🌡️', unit: '°C' }
-                        };
-                        const info = kpiInfo[label] || { icon: '📊', unit: '' };
-                        
-                        return (
-                          <div key={label} className="group">
-                            <div className="flex items-center justify-between mb-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm">{info.icon}</span>
-                                <span className="text-xs font-semibold text-textPrimary-light dark:text-textPrimary-dark">{label}</span>
-                              </div>
-                              <span className={`text-sm font-bold tabular-nums ${statusColor}`}>{value}%</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="flex-1 h-1.5 bg-muted-light dark:bg-muted-dark rounded-full overflow-hidden">
-                                <div className={`h-full rounded-full ${barColor}`} style={{ width: `${value}%` }} />
-                              </div>
-                              <span className="text-[10px] text-textMuted-light dark:text-textMuted-dark w-16 text-right">
-                                {rawValue} {info.unit}
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    
-                    {/* Compact Legend */}
-                    <div className="mt-4 pt-3 border-t border-border-light dark:border-border-dark flex items-center justify-center gap-4 text-[9px]">
-                      <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> Good</span>
-                      <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-yellow-500"></span> Fair</span>
-                      <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-red-500"></span> Poor</span>
-                    </div>
-                  </Card>
-                </div>
-              </section>
-            )}
-
               <section className="grid grid-cols-1 gap-6 sm:gap-8">
                {data?.chart_data?.bar_charts?.map((chart, idx) => (
                 <Card key={`bar-${idx}`} title={chart.label} subtitle="Asset Density Analysis">
