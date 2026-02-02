@@ -794,7 +794,7 @@ const TabButton: React.FC<{
   );
 };
 
-const Dashboard: React.FC<{ onLogout: () => void; isDarkMode: boolean; toggleTheme: () => void }> = ({ onLogout, isDarkMode, toggleTheme }) => {
+const Dashboard: React.FC<{ onLogout: () => void; isDarkMode: boolean; toggleTheme: () => void; username: string }> = ({ onLogout, isDarkMode, toggleTheme, username }) => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<AnalyticsData | null>(null);
@@ -888,6 +888,7 @@ const Dashboard: React.FC<{ onLogout: () => void; isDarkMode: boolean; toggleThe
           isDarkMode={isDarkMode}
           toggleTheme={toggleTheme}
           analyticsData={data}
+          username={username}
         />
         
         <div className="flex flex-col gap-4 sm:gap-6 mb-6 sm:mb-10 mt-4 sm:mt-6">
@@ -1394,6 +1395,7 @@ export default function App() {
         <Dashboard 
           onLogout={handleLogout} 
           isDarkMode={isDarkMode} 
+          username={auth.username}
           toggleTheme={toggleTheme} 
         />
       ) : (
