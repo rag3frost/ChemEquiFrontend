@@ -23,6 +23,22 @@ export interface ChartData {
     health_score: number;
     title: string;
   };
+  pie_charts?: {
+    label: string;
+    data: { name: string; value: number }[];
+  }[];
+  histograms?: {
+    column: string;
+    bins: { range: string; count: number; min: number; max: number }[];
+    total: number;
+    stats: { mean: number; std: number; min: number; max: number };
+  }[];
+  grouped_bar_charts?: {
+    title: string;
+    group_by: string;
+    groups: string[];
+    datasets: { label: string; values: number[] }[];
+  }[];
 }
 
 // Legacy interface for backward compatibility with existing components

@@ -45,7 +45,7 @@ import { apiService } from './services/api';
 import { Button } from './components/Button';
 import { Card } from './components/Card';
 import { StatsCard } from './components/StatsCard';
-import { Chart, MultiLineChart } from './components/Charts';
+import { Chart, MultiLineChart, DonutChart, HistogramChart, GroupedBarChart } from './components/Charts';
 import { DashboardHeader } from './components/DashboardHeader';
 import { Progress } from './components/Progress';
 import { COLORS } from './constants';
@@ -1123,6 +1123,73 @@ const Dashboard: React.FC<{ onLogout: () => void; isDarkMode: boolean; toggleThe
             {/* VISUALIZATIONS TAB */}
             {activeTab === 'visualizations' && (
             <>
+              {/* Pie/Donut Charts Section */}
+              {data?.chart_data?.pie_charts && data.chart_data.pie_charts.length > 0 && (
+                <section className="mb-8">
+                  <div className="flex items-center gap-2 mb-4 sm:mb-6">
+                    <h2 className="text-xl sm:text-2xl font-black text-textPrimary-light dark:text-textPrimary-dark tracking-tight">Category Distribution</h2>
+                    <div className="h-px bg-border-light dark:bg-border-dark flex-1 ml-2 sm:ml-4"></div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {data.chart_data.pie_charts.map((chart, idx) => (
+                      <Card key={`pie-${idx}`} title={chart.label} subtitle="Distribution breakdown">
+                        <DonutChart 
+                          data={chart.data}
+                          label={chart.label}
+                          isDarkMode={isDarkMode}
+                        />
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Grouped Bar Charts Section */}
+              {data?.chart_data?.grouped_bar_charts && data.chart_data.grouped_bar_charts.length > 0 && (
+                <section className="mb-8">
+                  <div className="flex items-center gap-2 mb-4 sm:mb-6">
+                    <h2 className="text-xl sm:text-2xl font-black text-textPrimary-light dark:text-textPrimary-dark tracking-tight">Metric Comparisons</h2>
+                    <div className="h-px bg-border-light dark:bg-border-dark flex-1 ml-2 sm:ml-4"></div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-6">
+                    {data.chart_data.grouped_bar_charts.map((chart, idx) => (
+                      <Card key={`grouped-${idx}`} title={chart.title} subtitle={`Comparing metrics grouped by ${chart.group_by}`}>
+                        <GroupedBarChart 
+                          groups={chart.groups}
+                          datasets={chart.datasets}
+                          title={chart.title}
+                          groupBy={chart.group_by}
+                          isDarkMode={isDarkMode}
+                        />
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Histogram Section */}
+              {data?.chart_data?.histograms && data.chart_data.histograms.length > 0 && (
+                <section className="mb-8">
+                  <div className="flex items-center gap-2 mb-4 sm:mb-6">
+                    <h2 className="text-xl sm:text-2xl font-black text-textPrimary-light dark:text-textPrimary-dark tracking-tight">Value Distributions</h2>
+                    <div className="h-px bg-border-light dark:bg-border-dark flex-1 ml-2 sm:ml-4"></div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {data.chart_data.histograms.map((hist, idx) => (
+                      <Card key={`hist-${idx}`} title={hist.column} subtitle="Frequency distribution">
+                        <HistogramChart 
+                          bins={hist.bins}
+                          column={hist.column}
+                          stats={hist.stats}
+                          isDarkMode={isDarkMode}
+                        />
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Original Bar Charts Section */}
               <section className="grid grid-cols-1 gap-6 sm:gap-8">
                {data?.chart_data?.bar_charts?.map((chart, idx) => (
                 <Card key={`bar-${idx}`} title={chart.label} subtitle="Asset Density Analysis">

@@ -1055,3 +1055,333 @@ export const RadarChart: React.FC<RadarChartProps> = ({
     </div>
   );
 };
+
+// ============================================================================
+// DONUT CHART - Modern Pie Chart for Categorical Distribution
+// ============================================================================
+
+interface DonutChartProps {
+  data: { name: string; value: number }[];
+  label: string;
+  isDarkMode: boolean;
+}
+
+// Donut chart color palette
+const DONUT_COLORS = [
+  '#E6F76A', // Primary lime
+  '#8B5CF6', // Purple
+  '#10B981', // Emerald
+  '#F59E0B', // Amber
+  '#EF4444', // Red
+  '#3B82F6', // Blue
+  '#EC4899', // Pink
+  '#14B8A6', // Teal
+];
+
+export const DonutChart: React.FC<DonutChartProps> = ({ data, label, isDarkMode }) => {
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+  
+  const chartData = {
+    labels: data.map(d => d.name),
+    datasets: [{
+      data: data.map(d => d.value),
+      backgroundColor: DONUT_COLORS.slice(0, data.length),
+      borderColor: isDarkMode ? '#0B0B0C' : '#FFFFFF',
+      borderWidth: 3,
+      hoverBorderWidth: 4,
+      hoverOffset: 8,
+    }]
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '65%',
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: isDarkMode ? 'rgba(30, 30, 35, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+        titleColor: isDarkMode ? '#FFFFFF' : '#0B0B0C',
+        bodyColor: isDarkMode ? '#9CA3AF' : '#6B7280',
+        borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+        borderWidth: 1,
+        cornerRadius: 12,
+        padding: 12,
+        titleFont: { size: 13, weight: 700, family: 'Plus Jakarta Sans' },
+        bodyFont: { size: 12, family: 'Plus Jakarta Sans' },
+        callbacks: {
+          label: function(context: any) {
+            const value = context.raw;
+            const percentage = ((value / total) * 100).toFixed(1);
+            return `${value} (${percentage}%)`;
+          }
+        }
+      }
+    },
+    animation: {
+      animateRotate: true,
+      animateScale: true,
+    }
+  } as any;
+
+  return (
+    <div className="relative">
+      <div className="h-[220px] w-full">
+        <Pie data={chartData} options={options} />
+      </div>
+      
+      {/* Center label */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+        <div className="text-2xl font-black text-textPrimary-light dark:text-textPrimary-dark">
+          {total}
+        </div>
+        <div className="text-xs font-medium text-textMuted-light dark:text-textMuted-dark">
+          Total
+        </div>
+      </div>
+      
+      {/* Legend */}
+      <div className="mt-4 flex flex-wrap justify-center gap-3">
+        {data.map((item, idx) => (
+          <div key={item.name} className="flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full" 
+              style={{ backgroundColor: DONUT_COLORS[idx % DONUT_COLORS.length] }}
+            />
+            <span className="text-xs font-medium text-textSecondary-light dark:text-textSecondary-dark">
+              {item.name}
+            </span>
+            <span className="text-xs font-bold text-textPrimary-light dark:text-textPrimary-dark">
+              {item.value}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// HISTOGRAM CHART - Distribution Visualization
+// ============================================================================
+
+interface HistogramProps {
+  bins: { range: string; count: number; min: number; max: number }[];
+  column: string;
+  stats: { mean: number; std: number; min: number; max: number };
+  isDarkMode: boolean;
+}
+
+export const HistogramChart: React.FC<HistogramProps> = ({ bins, column, stats, isDarkMode }) => {
+  const maxCount = Math.max(...bins.map(b => b.count));
+  
+  const chartData = {
+    labels: bins.map(b => b.range),
+    datasets: [{
+      label: 'Frequency',
+      data: bins.map(b => b.count),
+      backgroundColor: bins.map((_, idx) => {
+        // Gradient effect based on position
+        const intensity = 0.6 + (idx / bins.length) * 0.4;
+        return isDarkMode 
+          ? `rgba(230, 247, 106, ${intensity})`
+          : `rgba(139, 92, 246, ${intensity})`;
+      }),
+      borderColor: isDarkMode ? '#E6F76A' : '#8B5CF6',
+      borderWidth: 1,
+      borderRadius: 4,
+      barPercentage: 0.9,
+      categoryPercentage: 0.95,
+    }]
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: isDarkMode ? 'rgba(30, 30, 35, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+        titleColor: isDarkMode ? '#FFFFFF' : '#0B0B0C',
+        bodyColor: isDarkMode ? '#9CA3AF' : '#6B7280',
+        borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+        borderWidth: 1,
+        cornerRadius: 12,
+        padding: 12,
+        titleFont: { size: 13, weight: 700, family: 'Plus Jakarta Sans' },
+        bodyFont: { size: 12, family: 'Plus Jakarta Sans' },
+        callbacks: {
+          title: function(context: any) {
+            return `Range: ${context[0].label}`;
+          },
+          label: function(context: any) {
+            const count = context.raw;
+            const total = bins.reduce((sum, b) => sum + b.count, 0);
+            const percentage = ((count / total) * 100).toFixed(1);
+            return `Count: ${count} (${percentage}%)`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: isDarkMode ? '#6B7280' : '#9CA3AF',
+          font: { size: 9, weight: 600, family: 'Plus Jakarta Sans' },
+          maxRotation: 45,
+          minRotation: 45,
+        }
+      },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+        },
+        ticks: {
+          color: isDarkMode ? '#6B7280' : '#9CA3AF',
+          font: { size: 10, weight: 600, family: 'Plus Jakarta Sans' },
+          stepSize: Math.ceil(maxCount / 5),
+        }
+      }
+    }
+  } as any;
+
+  return (
+    <div>
+      <div className="h-[200px] w-full">
+        <Bar data={chartData} options={options} />
+      </div>
+      
+      {/* Stats footer */}
+      <div className="mt-4 pt-3 border-t border-border-light dark:border-border-dark grid grid-cols-4 gap-2 text-center">
+        <div>
+          <div className="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase">Mean</div>
+          <div className="text-sm font-bold text-textPrimary-light dark:text-textPrimary-dark">{stats.mean}</div>
+        </div>
+        <div>
+          <div className="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase">Std</div>
+          <div className="text-sm font-bold text-textPrimary-light dark:text-textPrimary-dark">{stats.std}</div>
+        </div>
+        <div>
+          <div className="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase">Min</div>
+          <div className="text-sm font-bold text-textPrimary-light dark:text-textPrimary-dark">{stats.min}</div>
+        </div>
+        <div>
+          <div className="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase">Max</div>
+          <div className="text-sm font-bold text-textPrimary-light dark:text-textPrimary-dark">{stats.max}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// GROUPED BAR CHART - Compare Metrics by Category
+// ============================================================================
+
+interface GroupedBarChartProps {
+  groups: string[];
+  datasets: { label: string; values: number[] }[];
+  title: string;
+  groupBy: string;
+  isDarkMode: boolean;
+}
+
+const GROUPED_COLORS = [
+  { bg: 'rgba(230, 247, 106, 0.8)', border: '#E6F76A' },  // Lime
+  { bg: 'rgba(139, 92, 246, 0.8)', border: '#8B5CF6' },   // Purple
+  { bg: 'rgba(16, 185, 129, 0.8)', border: '#10B981' },   // Emerald
+  { bg: 'rgba(245, 158, 11, 0.8)', border: '#F59E0B' },   // Amber
+  { bg: 'rgba(59, 130, 246, 0.8)', border: '#3B82F6' },   // Blue
+];
+
+export const GroupedBarChart: React.FC<GroupedBarChartProps> = ({ 
+  groups, 
+  datasets, 
+  title, 
+  groupBy,
+  isDarkMode 
+}) => {
+  const chartData = {
+    labels: groups,
+    datasets: datasets.map((ds, idx) => ({
+      label: ds.label,
+      data: ds.values,
+      backgroundColor: GROUPED_COLORS[idx % GROUPED_COLORS.length].bg,
+      borderColor: GROUPED_COLORS[idx % GROUPED_COLORS.length].border,
+      borderWidth: 2,
+      borderRadius: 6,
+      barPercentage: 0.8,
+      categoryPercentage: 0.85,
+    }))
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top' as const,
+        align: 'end' as const,
+        labels: {
+          color: isDarkMode ? '#9CA3AF' : '#6B7280',
+          font: { size: 11, weight: 600, family: 'Plus Jakarta Sans' },
+          boxWidth: 12,
+          boxHeight: 12,
+          borderRadius: 3,
+          useBorderRadius: true,
+          padding: 16,
+        }
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: isDarkMode ? 'rgba(30, 30, 35, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+        titleColor: isDarkMode ? '#FFFFFF' : '#0B0B0C',
+        bodyColor: isDarkMode ? '#9CA3AF' : '#6B7280',
+        borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+        borderWidth: 1,
+        cornerRadius: 12,
+        padding: 12,
+        titleFont: { size: 13, weight: 700, family: 'Plus Jakarta Sans' },
+        bodyFont: { size: 12, family: 'Plus Jakarta Sans' },
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: isDarkMode ? '#6B7280' : '#9CA3AF',
+          font: { size: 10, weight: 600, family: 'Plus Jakarta Sans' },
+        }
+      },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+        },
+        ticks: {
+          color: isDarkMode ? '#6B7280' : '#9CA3AF',
+          font: { size: 10, weight: 600, family: 'Plus Jakarta Sans' },
+        }
+      }
+    }
+  } as any;
+
+  return (
+    <div className="h-[280px] w-full">
+      <Bar data={chartData} options={options} />
+    </div>
+  );
+};
