@@ -1124,6 +1124,21 @@ const Dashboard: React.FC<{ onLogout: () => void; isDarkMode: boolean; toggleThe
             {/* VISUALIZATIONS TAB */}
             {activeTab === 'visualizations' && (
             <>
+              {/* No Data Message */}
+              {(!data?.chart_data?.pie_charts || data.chart_data.pie_charts.length === 0) && 
+               (!data?.chart_data?.histograms || data.chart_data.histograms.length === 0) &&
+               (!data?.chart_data?.grouped_bar_charts || data.chart_data.grouped_bar_charts.length === 0) && (
+                <div className="flex flex-col items-center justify-center min-h-[40vh] text-center space-y-4">
+                  <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center">
+                    <PieChart size={36} className="text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-textPrimary-light dark:text-textPrimary-dark mb-2">No Advanced Visualizations</h3>
+                    <p className="text-textMuted-light dark:text-textMuted-dark max-w-md">This dataset was uploaded with an older version. Upload a new CSV to see pie charts, histograms, and grouped comparisons.</p>
+                  </div>
+                </div>
+              )}
+              
               {/* Pie/Donut Charts Section */}
               {data?.chart_data?.pie_charts && data.chart_data.pie_charts.length > 0 && (
                 <section className="mb-8">
