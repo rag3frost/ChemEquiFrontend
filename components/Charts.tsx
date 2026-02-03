@@ -1129,29 +1129,35 @@ export const DonutChart: React.FC<DonutChartProps> = ({ data, label, isDarkMode 
 
   return (
     <div className="relative">
-      <div className="h-[220px] w-full">
+      <div className="h-[220px] w-full relative">
         <Pie data={chartData} options={options} />
+        {/* Center label - positioned inside chart container */}
+        <div 
+          className="absolute text-center pointer-events-none"
+          style={{
+            top: '45%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <div className="text-3xl font-black text-textPrimary-light dark:text-textPrimary-dark leading-none">
+            {total}
+          </div>
+          <div className="text-xs font-medium text-textMuted-light dark:text-textMuted-dark mt-1">
+            Total
+          </div>
+        </div>
       </div>
       
-      {/* Center label */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-        <div className="text-2xl font-black text-textPrimary-light dark:text-textPrimary-dark">
-          {total}
-        </div>
-        <div className="text-xs font-medium text-textMuted-light dark:text-textMuted-dark">
-          Total
-        </div>
-      </div>
-      
-      {/* Legend */}
-      <div className="mt-4 flex flex-wrap justify-center gap-3">
+      {/* Legend - improved spacing */}
+      <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 px-2">
         {data.map((item, idx) => (
-          <div key={item.name} className="flex items-center gap-2">
+          <div key={item.name} className="flex items-center gap-1.5">
             <div 
-              className="w-3 h-3 rounded-full" 
+              className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
               style={{ backgroundColor: DONUT_COLORS[idx % DONUT_COLORS.length] }}
             />
-            <span className="text-xs font-medium text-textSecondary-light dark:text-textSecondary-dark">
+            <span className="text-xs font-medium text-textSecondary-light dark:text-textSecondary-dark truncate max-w-[100px]">
               {item.name}
             </span>
             <span className="text-xs font-bold text-textPrimary-light dark:text-textPrimary-dark">
@@ -1236,9 +1242,11 @@ export const HistogramChart: React.FC<HistogramProps> = ({ bins, column, stats, 
         },
         ticks: {
           color: isDarkMode ? '#6B7280' : '#9CA3AF',
-          font: { size: 9, weight: 600, family: 'Plus Jakarta Sans' },
+          font: { size: 8, weight: 600, family: 'Plus Jakarta Sans' },
           maxRotation: 45,
           minRotation: 45,
+          autoSkip: true,
+          maxTicksLimit: 6,
         }
       },
       y: {
@@ -1257,7 +1265,7 @@ export const HistogramChart: React.FC<HistogramProps> = ({ bins, column, stats, 
 
   return (
     <div>
-      <div className="h-[200px] w-full">
+      <div className="h-[220px] w-full">
         <Bar data={chartData} options={options} />
       </div>
       
