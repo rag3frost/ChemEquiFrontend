@@ -10,15 +10,7 @@
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-4.1-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 
-<p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=E6F76A&center=true&vCenter=true&random=false&width=600&lines=Real-time+Industrial+Analytics;Advanced+Data+Visualization;Cloud-Synced+Equipment+Monitoring;Beautiful+Dark+%26+Light+Themes" alt="Typing SVG" />
-</p>
-
 [Live Demo](https://chemequi.vercel.app) · [Report Bug](https://github.com/issues) · [Request Feature](https://github.com/issues)
-
----
-
-<img width="90%" src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=header&animation=twinkling"/>
 
 </div>
 
@@ -300,8 +292,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](../LICENS
 ---
 
 <div align="center">
-
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer&animation=twinkling"/>
 
 **⭐ Star this repository if you found it helpful!**
 
